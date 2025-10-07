@@ -403,9 +403,19 @@ async function showDayAppointments(date) {
             .where('date', '==', date)
             .get();
 
+        const dateFormatted = new Date(date + 'T00:00:00').toLocaleDateString('pt-BR');
+
+        // Botão de novo agendamento que será adicionado em ambos os casos
+        const newAppointmentBtn = `
+            <button class="btn-new-appointment" onclick="createAppointmentForDate('${date}')">
+                ➕ Novo Agendamento para este dia
+            </button>
+        `;
+
         if (snapshot.empty) {
             dayAppointments.innerHTML = `
-                <h3>Agendamentos para ${new Date(date + 'T00:00:00').toLocaleDateString('pt-BR')}</h3>
+                <h3>Agendamentos para ${dateFormatted}</h3>
+                ${newAppointmentBtn}
                 <div class="empty-state">
                     <p>Nenhum agendamento para este dia.</p>
                 </div>
@@ -423,7 +433,7 @@ async function showDayAppointments(date) {
             return a.data.time.localeCompare(b.data.time);
         });
 
-        let html = `<h3>Agendamentos para ${new Date(date + 'T00:00:00').toLocaleDateString('pt-BR')}</h3>`;
+        let html = `<h3>Agendamentos para ${dateFormatted}</h3>${newAppointmentBtn}`;
 
         appointments.forEach(appointment => {
             html += renderAppointmentCard(appointment.id, appointment.data, true);
@@ -435,6 +445,20 @@ async function showDayAppointments(date) {
         console.error('Erro ao carregar agendamentos do dia:', error);
         dayAppointments.innerHTML = '<p class="error">Erro ao carregar agendamentos.</p>';
     }
+}
+
+// Função para criar novo agendamento com data pré-preenchida
+function createAppointmentForDate(date) {
+    // Mudar para a aba de novo agendamento
+    document.querySelector('[data-tab="novo"]').click();
+
+    // Preencher o campo de data
+    document.getElementById('date').value = date;
+
+    // Focar no campo de nome do cliente
+    setTimeout(() => {
+        document.getElementById('client-name').focus();
+    }, 100);
 }
 
 // Lista de Agendamentos

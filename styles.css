@@ -7,7 +7,7 @@
 :root {
     /* Paleta Dark inspirada em Maryshmallo */
     --primary-color: #1a1a1a;
-    --secondary-color: #f4d03f;
+    --secondary-color: #c40ee9;
     /* Dourado mais claro e vibrante */
     --accent-color: #ff69b4;
     /* Rosa vibrante */
@@ -294,7 +294,7 @@ header p {
 }
 
 .calendar-day.has-appointments {
-    background: #ffeaa7;
+    background: #ac22b1;
     border: 2px solid var(--secondary-color);
     color: #1a1a1a;
 }
@@ -328,6 +328,32 @@ header p {
 #day-appointments h3 {
     margin-bottom: 15px;
     color: var(--text-color);
+}
+
+.btn-new-appointment {
+    background: var(--gradient-accent);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(244, 208, 63, 0.3);
+    margin-bottom: 20px;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-new-appointment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(244, 208, 63, 0.4);
+}
+
+.btn-new-appointment:active {
+    transform: translateY(0);
 }
 
 /* Form Styles */
@@ -626,10 +652,11 @@ header p {
     border-radius: 15px;
     border: 1px solid var(--border-color);
     border-left: 4px solid var(--accent-color);
-    transition: all 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    transform: translateY(0);
 }
 
 .appointment-card::before {
@@ -640,7 +667,8 @@ header p {
     width: 4px;
     height: 100%;
     background: var(--gradient-accent);
-    transition: width 0.3s;
+    opacity: 1;
+    transition: width 0.3s ease, opacity 0.3s ease;
 }
 
 .appointment-card:hover {
