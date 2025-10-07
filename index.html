@@ -11,8 +11,16 @@
 <body>
     <div class="container">
         <header>
-            <h1>📅 Maryshmallo Tattoo</h1>
-            <!-- <p>Organize seus agendamentos de forma profissional</p> -->
+            <div class="header-content">
+                <div>
+                    <h1>📅 Maryshmallo Tattoo</h1>
+                    <!-- <p>Organize seus agendamentos de forma profissional</p> -->
+                </div>
+                <div class="header-user">
+                    <span id="user-email" class="user-email"></span>
+                    <button id="logout-btn" class="btn-logout">Sair</button>
+                </div>
+            </div>
         </header>
 
         <nav class="tabs">
@@ -105,13 +113,45 @@
         </div>
     </div>
 
+    <!-- Tela de Login -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>🔒 Maryshmallo Tattoo</h1>
+                <p>Área Restrita - Faça login para acessar</p>
+            </div>
+
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" required placeholder="seu@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" required placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn-login">Entrar</button>
+
+                <div id="login-error" class="login-error"></div>
+            </form>
+
+            <div class="login-footer">
+                <p>Esqueceu a senha? <a href="#" id="reset-password-link">Recuperar senha</a></p>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
     <!-- App Scripts -->
     <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
     <script src="app.js"></script>
 </body>
 

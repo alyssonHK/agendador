@@ -166,11 +166,11 @@ async function handleFormSubmit(e) {
         if (currentEditingId) {
             // Atualizar agendamento existente
             docRef = appointmentsCollection.doc(currentEditingId);
-            
+
             // Obter imagens antigas para comparar e deletar as removidas
             const oldDoc = await docRef.get();
             const oldImages = oldDoc.data().images || [];
-            
+
             // Deletar imagens que foram removidas
             const imagesToDelete = oldImages.filter(url => !existingImages.includes(url));
             for (const imageUrl of imagesToDelete) {
@@ -182,7 +182,7 @@ async function handleFormSubmit(e) {
                     console.error('Erro ao deletar imagem:', error);
                 }
             }
-            
+
             await docRef.update(formData);
         } else {
             // Criar novo agendamento
