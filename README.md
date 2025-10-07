@@ -1,19 +1,28 @@
 # Agendador de Tatuagens 📅
 
-Um sistema web completo para gerenciar agendamentos de tatuagens, desenvolvido com Firebase e hospedado no GitHub Pages.
+Um sistema web completo e **seguro** para gerenciar agendamentos de tatuagens, desenvolvido com Firebase e hospedado no GitHub Pages.
 
 ## 🎨 Funcionalidades
 
+- 🔐 **Sistema de Login** - Acesso protegido por autenticação
 - ✅ Criar agendamentos com informações detalhadas
-- ✅ Upload de múltiplas imagens de referência
-- ✅ Visualização em calendário interativo
-- ✅ Lista completa de agendamentos
-- ✅ Editar e excluir agendamentos
-- ✅ Filtrar e buscar agendamentos
-- ✅ Interface responsiva e moderna
-- ✅ Armazenamento em nuvem com Firebase
+- 📸 Upload e gerenciamento de múltiplas imagens de referência
+- 🗓️ Visualização em calendário interativo
+- 📋 Lista completa de agendamentos
+- ✏️ Editar e excluir agendamentos
+- 🔍 Filtrar e buscar agendamentos
+- 📱 Interface responsiva e moderna
+- ☁️ Armazenamento em nuvem com Firebase
+- 🖼️ Galeria de imagens com thumbnails
+- 🔄 Gerenciamento avançado de imagens na edição
 
 ## 🚀 Como Configurar
+
+### ⚡ Início Rápido
+
+**Para configurar o sistema de login em 5 minutos, veja:** [QUICK-START-LOGIN.md](QUICK-START-LOGIN.md)
+
+**Para documentação completa do login, veja:** [LOGIN-SETUP.md](LOGIN-SETUP.md)
 
 ### 1. Configurar o Firebase
 
@@ -48,35 +57,52 @@ const firebaseConfig = {
 };
 ```
 
-### 2. Configurar Regras de Segurança
+### 2. Configurar Firebase Authentication
 
-**Firestore Rules** (para começar - modo aberto):
-```
+1. Ative o **Firebase Authentication**:
+   - Vá em "Authentication" no menu lateral
+   - Clique em "Começar"
+   - Ative o método "E-mail/Senha"
+
+2. Crie seu primeiro usuário:
+   - Authentication > Users > Add user
+   - Digite e-mail e senha
+   - Salve
+
+**Documentação completa:** [LOGIN-SETUP.md](LOGIN-SETUP.md)
+
+### 3. Configurar Regras de Segurança
+
+**Firestore Rules** (com autenticação):
+```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
+    match /appointments/{appointmentId} {
+      allow read, write: if request.auth != null;
     }
   }
 }
 ```
 
-**Storage Rules** (para começar - modo aberto):
-```
+**Storage Rules** (com autenticação):
+```javascript
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if true;
+    match /appointments/{appointmentId}/{fileName} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
     }
   }
 }
 ```
 
-⚠️ **IMPORTANTE**: Essas regras são para desenvolvimento. Para produção, configure regras de segurança adequadas!
+⚠️ **IMPORTANTE**: Estas regras protegem seus dados! Apenas usuários autenticados têm acesso.
 
-### 3. Testar Localmente
+### 4. Testar Localmente
 
 Você pode testar localmente abrindo o arquivo `index.html` diretamente no navegador ou usando um servidor local:
 
@@ -92,7 +118,7 @@ npx serve
 
 Acesse: `http://localhost:8000`
 
-### 4. Publicar no GitHub Pages
+### 5. Publicar no GitHub Pages
 
 1. Crie um repositório no GitHub
 2. Faça push dos arquivos:
