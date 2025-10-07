@@ -2,6 +2,8 @@
 
 Um sistema web completo e **seguro** para gerenciar agendamentos de tatuagens, desenvolvido com Firebase e hospedado no GitHub Pages.
 
+> 🎨 **Novo:** Visual dark theme inspirado no estúdio Maryshmallo Tattoo!
+
 ## 🎨 Funcionalidades
 
 - 🔐 **Sistema de Login** - Acesso protegido por autenticação
@@ -223,6 +225,7 @@ O sistema inclui um **Dashboard completo** com:
 - 📙 [FIRESTORE-RULES-UPDATE.md](FIRESTORE-RULES-UPDATE.md) - Guia de regras de segurança
 - 📕 [NEW-FIELDS-GUIDE.md](NEW-FIELDS-GUIDE.md) - Guia dos campos valor, rede social e status
 - 📊 [DASHBOARD-GUIDE.md](DASHBOARD-GUIDE.md) - Guia completo do Dashboard
+- 🎨 [VISUAL-UPDATE.md](VISUAL-UPDATE.md) - Documentação do novo tema dark
 - 📓 [DEPLOY.md](DEPLOY.md) - Como fazer deploy no GitHub Pages
 
 ## 🎨 Personalização
