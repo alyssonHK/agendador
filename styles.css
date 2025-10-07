@@ -1,0 +1,704 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #e74c3c;
+    --accent-color: #3498db;
+    --success-color: #27ae60;
+    --bg-color: #ecf0f1;
+    --card-bg: #ffffff;
+    --text-color: #2c3e50;
+    --border-color: #bdc3c7;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--text-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    background: var(--primary-color);
+    border-bottom: 3px solid var(--secondary-color);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 15px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn.active {
+    background: var(--card-bg);
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.tab-content {
+    display: none;
+    padding: 30px;
+    animation: fadeIn 0.3s;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Calendar Styles */
+.calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-controls button {
+    padding: 10px 20px;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.calendar-controls button:hover {
+    background: #2980b9;
+}
+
+.calendar-controls h2 {
+    font-size: 1.8em;
+    color: var(--primary-color);
+}
+
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-bottom: 30px;
+}
+
+.calendar-day-header {
+    background: var(--primary-color);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.calendar-day {
+    background: var(--bg-color);
+    padding: 10px;
+    min-height: 100px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.calendar-day:hover {
+    background: #d5dbdb;
+    transform: scale(1.02);
+}
+
+.calendar-day.other-month {
+    opacity: 0.3;
+}
+
+.calendar-day.today {
+    background: var(--accent-color);
+    color: white;
+    font-weight: bold;
+}
+
+.calendar-day.has-appointments {
+    background: #ffeaa7;
+    border: 2px solid var(--secondary-color);
+}
+
+.calendar-day .day-number {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.calendar-day .appointment-count {
+    background: var(--secondary-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8em;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+#day-appointments {
+    background: var(--bg-color);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+#day-appointments h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+/* Form Styles */
+.appointment-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #7f8c8d;
+    font-size: 0.9em;
+}
+
+.image-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.image-preview-item {
+    position: relative;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 2px solid var(--border-color);
+}
+
+.image-preview-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+.image-preview-item .remove-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s;
+    z-index: 10;
+}
+
+.image-preview-item .remove-image:hover {
+    transform: scale(1.1);
+}
+
+.image-preview-item .image-badge {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    background: var(--success-color);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: bold;
+    text-transform: uppercase;
+    z-index: 10;
+}
+
+.image-preview-item .image-badge.new {
+    background: var(--accent-color);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-edit {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background: var(--success-color);
+    color: white;
+    flex: 1;
+}
+
+.btn-primary:hover {
+    background: #229954;
+}
+
+.btn-secondary {
+    background: var(--border-color);
+    color: var(--text-color);
+}
+
+.btn-secondary:hover {
+    background: #95a5a6;
+}
+
+.btn-danger {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.btn-edit {
+    background: var(--accent-color);
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #2980b9;
+}
+
+/* Filter Controls */
+.filter-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-controls input,
+.filter-controls select {
+    padding: 10px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.filter-controls input {
+    flex: 1;
+}
+
+/* Appointments List */
+#appointments-list {
+    display: grid;
+    gap: 15px;
+}
+
+.appointment-card {
+    background: var(--bg-color);
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 5px solid var(--accent-color);
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.appointment-card:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow);
+}
+
+.appointment-card.past {
+    opacity: 0.6;
+    border-left-color: var(--border-color);
+}
+
+.appointment-card.today {
+    border-left-color: var(--secondary-color);
+    background: #fff5f5;
+}
+
+.appointment-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1.3em;
+}
+
+.appointment-card .appointment-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.appointment-card .info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.appointment-card .info-item strong {
+    color: var(--primary-color);
+}
+
+.appointment-card .description {
+    margin: 10px 0;
+    color: #555;
+}
+
+.appointment-card .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.appointment-card .actions button {
+    padding: 8px 15px;
+    font-size: 0.9em;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s;
+}
+
+.modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.3s;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--border-color);
+    cursor: pointer;
+}
+
+.close:hover {
+    color: var(--secondary-color);
+}
+
+/* Modal Detail Layout */
+.modal-detail-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.modal-info {
+    padding-right: 20px;
+}
+
+.modal-info p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+/* Gallery Styles */
+.modal-gallery {
+    position: sticky;
+    top: 20px;
+}
+
+.modal-gallery h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    font-size: 1.2em;
+}
+
+.gallery-main {
+    background: var(--bg-color);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+}
+
+.gallery-main img {
+    width: 100%;
+    height: 400px;
+    object-fit: contain;
+    display: block;
+    background: #f8f9fa;
+}
+
+.gallery-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+}
+
+.gallery-thumbnails .thumbnail {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s;
+}
+
+.gallery-thumbnails .thumbnail:hover {
+    border-color: var(--accent-color);
+    transform: scale(1.05);
+}
+
+.gallery-thumbnails .thumbnail.active {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+}
+
+/* Old modal-images (manter para compatibilidade) */
+.modal-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.modal-images img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.modal-images img:hover {
+    transform: scale(1.05);
+}
+
+/* Loading */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--border-color);
+}
+
+.loading::after {
+    content: '⏳';
+    font-size: 2em;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--border-color);
+}
+
+.empty-state h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+
+    .container {
+        border-radius: 0;
+    }
+
+    header h1 {
+        font-size: 1.8em;
+    }
+
+    .tabs {
+        flex-direction: column;
+    }
+
+    .tab-content {
+        padding: 15px;
+    }
+
+    #calendar {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+    }
+
+    .calendar-day {
+        min-height: 60px;
+        padding: 5px;
+        font-size: 0.9em;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-controls {
+        flex-direction: column;
+    }
+
+    .appointment-card .appointment-info {
+        grid-template-columns: 1fr;
+    }
+
+    /* Modal responsivo */
+    .modal-content {
+        max-width: 95%;
+        max-height: 95vh;
+        padding: 20px;
+    }
+
+    .modal-detail-container {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-info {
+        padding-right: 0;
+    }
+
+    .modal-gallery {
+        position: static;
+        margin-top: 20px;
+    }
+
+    .gallery-main img {
+        height: 250px;
+    }
+}

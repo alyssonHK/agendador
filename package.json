@@ -1,0 +1,21 @@
+{
+    "name": "agendador-tatuagens",
+    "version": "1.0.0",
+    "description": "Sistema de agendamento de tatuagens com Firebase",
+    "main": "index.html",
+    "scripts": {
+        "start": "npx serve",
+        "deploy": "gh-pages -d ."
+    },
+    "keywords": [
+        "tatuagem",
+        "agendamento",
+        "calendario",
+        "firebase"
+    ],
+    "author": "Seu Nome",
+    "license": "MIT",
+    "devDependencies": {
+        "gh-pages": "^6.0.0"
+    }
+}

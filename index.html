@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maryshmallo Tattoo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📅 Maryshmallo Tattoo</h1>
+            <!-- <p>Organize seus agendamentos de forma profissional</p> -->
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="calendario">Calendário</button>
+            <button class="tab-btn" data-tab="novo">Novo Agendamento</button>
+            <button class="tab-btn" data-tab="lista">Lista de Agendamentos</button>
+        </nav>
+
+        <!-- Tab Calendário -->
+        <div id="calendario-tab" class="tab-content active">
+            <div class="calendar-controls">
+                <button id="prev-month">◀ Anterior</button>
+                <h2 id="current-month"></h2>
+                <button id="next-month">Próximo ▶</button>
+            </div>
+            <div id="calendar"></div>
+            <div id="day-appointments"></div>
+        </div>
+
+        <!-- Tab Novo Agendamento -->
+        <div id="novo-tab" class="tab-content">
+            <form id="appointment-form" class="appointment-form">
+                <div class="form-group">
+                    <label for="client-name">Nome do Cliente *</label>
+                    <input type="text" id="client-name" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Data *</label>
+                        <input type="date" id="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="time">Horário *</label>
+                        <input type="time" id="time" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descrição da Tatuagem *</label>
+                    <textarea id="description" rows="4" required
+                        placeholder="Descreva o estilo, tamanho, local do corpo, cores..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Observações</label>
+                    <textarea id="notes" rows="3"
+                        placeholder="Informações adicionais, alergias, cuidados especiais..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Telefone</label>
+                    <input type="tel" id="phone" placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="images">Imagens de Referência</label>
+                    <input type="file" id="images" multiple accept="image/*">
+                    <small>Você pode selecionar múltiplas imagens</small>
+                    <div id="image-preview" class="image-preview"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Salvar Agendamento</button>
+                    <button type="button" id="cancel-btn" class="btn-secondary">Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tab Lista -->
+        <div id="lista-tab" class="tab-content">
+            <div class="filter-controls">
+                <input type="text" id="search-input" placeholder="Buscar por nome do cliente...">
+                <select id="filter-status">
+                    <option value="all">Todos os Status</option>
+                    <option value="upcoming">Próximos</option>
+                    <option value="past">Passados</option>
+                </select>
+            </div>
+            <div id="appointments-list"></div>
+        </div>
+    </div>
+
+    <!-- Modal para visualizar detalhes -->
+    <div id="detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- App Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

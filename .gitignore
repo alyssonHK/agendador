@@ -1,0 +1,26 @@
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Arquivos de configuração local (não commitar suas credenciais!)
+# firebase-config.js
+
+# Dependências
+node_modules/
+
+# Arquivos de build
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
