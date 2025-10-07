@@ -22,6 +22,8 @@ const modal = document.getElementById('detail-modal');
 const modalBody = document.getElementById('modal-body');
 const closeModal = document.querySelector('.close');
 const cancelBtn = document.getElementById('cancel-btn');
+const valueInput = document.getElementById('value');
+const statusSelect = document.getElementById('status');
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
@@ -47,6 +49,8 @@ function initializeTabs() {
                 renderCalendar();
             } else if (targetTab === 'lista') {
                 loadAppointmentsList();
+            } else if (targetTab === 'dashboard') {
+                loadDashboardData();
             }
         });
     });
@@ -56,6 +60,7 @@ function initializeTabs() {
 function setupEventListeners() {
     appointmentForm.addEventListener('submit', handleFormSubmit);
     imageInput.addEventListener('change', handleImageSelect);
+    valueInput.addEventListener('input', formatCurrency);
     prevMonthBtn.addEventListener('click', () => changeMonth(-1));
     nextMonthBtn.addEventListener('click', () => changeMonth(1));
     searchInput.addEventListener('input', filterAppointments);
@@ -68,6 +73,21 @@ function setupEventListeners() {
             modal.classList.remove('active');
         }
     });
+}
+
+// Formatação de moeda (R$)
+function formatCurrency(e) {
+    let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+    value = (value / 100).toFixed(2); // Divide por 100 para ter centavos
+    value = value.replace('.', ','); // Troca ponto por vírgula
+    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.'); // Adiciona pontos de milhar
+    e.target.value = value;
+}
+
+// Remover formatação de moeda para salvar
+function parseCurrency(value) {
+    if (!value) return 0;
+    return parseFloat(value.replace(/\./g, '').replace(',', '.')) || 0;
 }
 
 // Manipulação de Imagens
@@ -150,26 +170,57 @@ async function uploadImages(appointmentId) {
 async function handleFormSubmit(e) {
     e.preventDefault();
 
+    const newStatus = document.getElementById('status').value;
+    const currentUser = getCurrentUser(); // Função do auth.js
+
     const formData = {
-        clientName: document.getElementById('client-name').value,
-        date: document.getElementById('date').value,
-        time: document.getElementById('time').value,
-        description: document.getElementById('description').value,
-        notes: document.getElementById('notes').value,
-        phone: document.getElementById('phone').value,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        clientName: document.getElementById('client-name').value || '',
+        date: document.getElementById('date').value || '',
+        time: document.getElementById('time').value || '',
+        description: document.getElementById('description').value || '',
+        notes: document.getElementById('notes').value || '',
+        phone: document.getElementById('phone').value || '',
+        socialMedia: document.getElementById('social-media').value || '',
+        value: parseCurrency(document.getElementById('value').value) || 0,
+        status: newStatus || 'agendado',
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     try {
         let docRef;
+        let statusHistory = [];
 
         if (currentEditingId) {
             // Atualizar agendamento existente
             docRef = appointmentsCollection.doc(currentEditingId);
 
-            // Obter imagens antigas para comparar e deletar as removidas
+            // Obter dados antigos
             const oldDoc = await docRef.get();
-            const oldImages = oldDoc.data().images || [];
+            const oldData = oldDoc.data();
+            const oldImages = oldData.images || [];
+            const oldStatus = oldData.status || 'agendado';
+            statusHistory = oldData.statusHistory || [];
+
+            // Se não há histórico (documento antigo), criar entrada inicial
+            if (statusHistory.length === 0) {
+                statusHistory.push({
+                    from: null,
+                    to: oldStatus,
+                    changedAt: oldData.createdAt?.toDate()?.toISOString() || new Date().toISOString(),
+                    changedBy: oldData.createdBy || 'Sistema'
+                });
+            }
+
+            // Verificar se o status mudou
+            if (oldStatus !== newStatus) {
+                // Adicionar ao histórico
+                statusHistory.push({
+                    from: oldStatus,
+                    to: newStatus,
+                    changedAt: new Date().toISOString(),
+                    changedBy: currentUser?.email || 'Desconhecido'
+                });
+            }
 
             // Deletar imagens que foram removidas
             const imagesToDelete = oldImages.filter(url => !existingImages.includes(url));
@@ -183,9 +234,20 @@ async function handleFormSubmit(e) {
                 }
             }
 
+            formData.statusHistory = statusHistory;
             await docRef.update(formData);
         } else {
             // Criar novo agendamento
+            formData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+
+            // Histórico inicial
+            formData.statusHistory = [{
+                from: null,
+                to: newStatus,
+                changedAt: new Date().toISOString(),
+                changedBy: currentUser?.email || 'Desconhecido'
+            }];
+
             docRef = await appointmentsCollection.add(formData);
         }
 
@@ -196,8 +258,12 @@ async function handleFormSubmit(e) {
             allImages = [...allImages, ...newImageUrls]; // Adicionar novas
         }
 
+        // Filtrar valores undefined do array de imagens
+        allImages = allImages.filter(img => img !== undefined && img !== null && img !== '');
+
         // Atualizar com todas as imagens (existentes + novas)
-        if (allImages.length > 0 || currentEditingId) {
+        // Só atualizar se houver imagens OU se estiver editando (para manter o array vazio se deletou todas)
+        if (allImages.length > 0 || (currentEditingId && existingImages.length === 0)) {
             await docRef.update({ images: allImages });
         }
 
@@ -220,6 +286,8 @@ function resetForm() {
     imagePreview.innerHTML = '';
     currentEditingId = null;
     imageInput.value = ''; // Limpar input de arquivo
+    valueInput.value = '0,00'; // Resetar valor
+    statusSelect.value = 'agendado'; // Status padrão
 }
 
 // Calendário
@@ -428,9 +496,23 @@ function renderAppointmentCard(id, data, compact = false) {
     if (isPast && !isToday) cardClass += ' past';
     if (isToday) cardClass += ' today';
 
+    // Formatar valor em moeda
+    const formattedValue = data.value ? `R$ ${data.value.toFixed(2).replace('.', ',')}` : '';
+
+    // Status emoji
+    const statusEmoji = {
+        'agendado': '📅',
+        'cancelado': '❌',
+        'feito': '✅',
+        'reagendado': '🔄'
+    };
+
     return `
         <div class="${cardClass}" onclick="showAppointmentDetail('${id}')">
-            <h3>👤 ${data.clientName}</h3>
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                <h3>👤 ${data.clientName}</h3>
+                ${data.status ? `<span class="status-badge ${data.status}">${statusEmoji[data.status] || ''} ${data.status}</span>` : ''}
+            </div>
             <div class="appointment-info">
                 <div class="info-item">
                     <strong>📅 Data:</strong> ${new Date(data.date + 'T00:00:00').toLocaleDateString('pt-BR')}
@@ -439,6 +521,8 @@ function renderAppointmentCard(id, data, compact = false) {
                     <strong>🕐 Horário:</strong> ${data.time}
                 </div>
                 ${data.phone ? `<div class="info-item"><strong>📱 Telefone:</strong> ${data.phone}</div>` : ''}
+                ${data.socialMedia ? `<div class="info-item"><strong>📱 Social:</strong> ${data.socialMedia}</div>` : ''}
+                ${formattedValue ? `<div class="info-item"><strong class="value-display">💰 ${formattedValue}</strong></div>` : ''}
             </div>
             ${!compact ? `<div class="description"><strong>Descrição:</strong> ${data.description}</div>` : ''}
             ${data.images && data.images.length > 0 ? `<div class="info-item">📷 ${data.images.length} imagem(ns)</div>` : ''}
@@ -486,6 +570,17 @@ async function showAppointmentDetail(id) {
 
         const data = doc.data();
 
+        // Formatar valor
+        const formattedValue = data.value ? `R$ ${data.value.toFixed(2).replace('.', ',')}` : 'Não informado';
+
+        // Status emoji
+        const statusEmoji = {
+            'agendado': '📅',
+            'cancelado': '❌',
+            'feito': '✅',
+            'reagendado': '🔄'
+        };
+
         // Layout com grid: informações à esquerda, imagens à direita
         let html = `
             <h2>📋 Detalhes do Agendamento</h2>
@@ -495,9 +590,32 @@ async function showAppointmentDetail(id) {
                     <p><strong>Data:</strong> ${new Date(data.date + 'T00:00:00').toLocaleDateString('pt-BR')}</p>
                     <p><strong>Horário:</strong> ${data.time}</p>
                     ${data.phone ? `<p><strong>Telefone:</strong> ${data.phone}</p>` : ''}
+                    ${data.socialMedia ? `<p><strong>Rede Social:</strong> ${data.socialMedia}</p>` : ''}
+                    <p><strong>Valor:</strong> <span class="value-display">${formattedValue}</span></p>
+                    <p><strong>Status:</strong> <span class="status-badge ${data.status}">${statusEmoji[data.status] || ''} ${data.status}</span></p>
                     <p><strong>Descrição:</strong></p>
                     <p style="margin-left: 20px; white-space: pre-wrap;">${data.description}</p>
                     ${data.notes ? `<p><strong>Observações:</strong></p><p style="margin-left: 20px; white-space: pre-wrap;">${data.notes}</p>` : ''}
+                    
+                    ${data.statusHistory && data.statusHistory.length > 0 ? `
+                    <div class="status-history">
+                        <h4>📜 Histórico de Status</h4>
+                        ${data.statusHistory.map(history => {
+            const changeDate = new Date(history.changedAt);
+            return `
+                                <div class="status-history-item">
+                                    <div>
+                                        ${history.from ? `<span class="status-badge ${history.from}">${statusEmoji[history.from] || ''} ${history.from}</span>` : '<span>Novo</span>'}
+                                        →
+                                        <span class="status-badge ${history.to}">${statusEmoji[history.to] || ''} ${history.to}</span>
+                                    </div>
+                                    <div class="timestamp">${changeDate.toLocaleString('pt-BR')}</div>
+                                    <div class="user-info">Por: ${history.changedBy}</div>
+                                </div>
+                            `;
+        }).join('')}
+                    </div>
+                    ` : ''}
                 </div>
         `;
 
@@ -559,6 +677,16 @@ async function editAppointment(id) {
         document.getElementById('description').value = data.description;
         document.getElementById('notes').value = data.notes || '';
         document.getElementById('phone').value = data.phone || '';
+        document.getElementById('social-media').value = data.socialMedia || '';
+        document.getElementById('status').value = data.status || 'agendado';
+
+        // Formatar e exibir valor
+        if (data.value) {
+            const formattedValue = data.value.toFixed(2).replace('.', ',');
+            document.getElementById('value').value = formattedValue;
+        } else {
+            document.getElementById('value').value = '0,00';
+        }
 
         // Carregar imagens existentes
         existingImages = data.images || [];
@@ -627,4 +755,283 @@ async function deleteAppointment(id, clientName) {
         console.error('Erro ao excluir agendamento:', error);
         alert('Erro ao excluir agendamento.');
     }
+}
+
+// ==================== DASHBOARD ====================
+
+let allAppointmentsData = []; // Cache de dados
+
+// Carregar dados do dashboard
+async function loadDashboardData() {
+    try {
+        const snapshot = await appointmentsCollection.get();
+        allAppointmentsData = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        updateDashboardMetrics();
+        updateStatusChart();
+        updateRevenueChart();
+        updateMonthlySummary();
+    } catch (error) {
+        console.error('Erro ao carregar dados do dashboard:', error);
+    }
+}
+
+// Atualizar métricas principais
+function updateDashboardMetrics() {
+    const totalRevenue = allAppointmentsData.reduce((sum, apt) => sum + (apt.value || 0), 0);
+    const totalAppointments = allAppointmentsData.length;
+    const completedCount = allAppointmentsData.filter(apt => apt.status === 'feito').length;
+    const pendingCount = allAppointmentsData.filter(apt =>
+        apt.status === 'agendado' || apt.status === 'reagendado'
+    ).length;
+
+    document.getElementById('total-revenue').textContent = formatCurrencyValue(totalRevenue);
+    document.getElementById('total-appointments').textContent = totalAppointments;
+    document.getElementById('completed-count').textContent = completedCount;
+    document.getElementById('pending-count').textContent = pendingCount;
+}
+
+// Formatar valor para exibição
+function formatCurrencyValue(value) {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(value);
+}
+
+// Gráfico de Status
+function updateStatusChart() {
+    const statusCounts = {
+        agendado: 0,
+        cancelado: 0,
+        feito: 0,
+        reagendado: 0
+    };
+
+    allAppointmentsData.forEach(apt => {
+        if (statusCounts.hasOwnProperty(apt.status)) {
+            statusCounts[apt.status]++;
+        }
+    });
+
+    const maxCount = Math.max(...Object.values(statusCounts), 1);
+    const chartContainer = document.getElementById('status-chart');
+
+    const statusLabels = {
+        agendado: '📅 Agendado',
+        cancelado: '❌ Cancelado',
+        feito: '✅ Feito',
+        reagendado: '🔄 Reagendado'
+    };
+
+    const statusColors = {
+        agendado: 'linear-gradient(to top, #3498db, #2980b9)',
+        cancelado: 'linear-gradient(to top, #e74c3c, #c0392b)',
+        feito: 'linear-gradient(to top, #27ae60, #229954)',
+        reagendado: 'linear-gradient(to top, #f39c12, #e67e22)'
+    };
+
+    chartContainer.innerHTML = '';
+
+    Object.keys(statusCounts).forEach(status => {
+        const count = statusCounts[status];
+        const height = maxCount > 0 ? (count / maxCount) * 100 : 0;
+
+        const barItem = document.createElement('div');
+        barItem.className = 'bar-item';
+        barItem.innerHTML = `
+            <div class="bar" style="height: ${height}%; background: ${statusColors[status]};">
+                <span class="bar-value">${count}</span>
+            </div>
+            <div class="bar-label">${statusLabels[status]}</div>
+        `;
+
+        chartContainer.appendChild(barItem);
+    });
+}
+
+// Gráfico de Receita Mensal (últimos 6 meses)
+function updateRevenueChart() {
+    const monthlyRevenue = {};
+    const today = new Date();
+
+    // Preparar últimos 6 meses
+    for (let i = 5; i >= 0; i--) {
+        const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        monthlyRevenue[key] = {
+            value: 0,
+            label: date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })
+        };
+    }
+
+    // Calcular receita por mês
+    allAppointmentsData.forEach(apt => {
+        if (apt.date && apt.value) {
+            const [year, month] = apt.date.split('-');
+            const key = `${year}-${month}`;
+
+            if (monthlyRevenue[key]) {
+                monthlyRevenue[key].value += apt.value;
+            }
+        }
+    });
+
+    const maxRevenue = Math.max(...Object.values(monthlyRevenue).map(m => m.value), 1);
+    const chartContainer = document.getElementById('revenue-chart');
+    chartContainer.innerHTML = '';
+
+    Object.entries(monthlyRevenue).forEach(([key, data]) => {
+        const percentage = maxRevenue > 0 ? (data.value / maxRevenue) * 100 : 0;
+
+        const barItem = document.createElement('div');
+        barItem.className = 'horizontal-bar-item';
+        barItem.innerHTML = `
+            <div class="horizontal-bar-label">${data.label}</div>
+            <div class="horizontal-bar-container">
+                <div class="horizontal-bar" style="width: ${percentage}%;"></div>
+            </div>
+            <div class="horizontal-bar-value">${formatCurrencyValue(data.value)}</div>
+        `;
+
+        chartContainer.appendChild(barItem);
+    });
+}
+
+// Resumo Mensal Detalhado
+function updateMonthlySummary() {
+    const monthlySummary = {};
+
+    allAppointmentsData.forEach(apt => {
+        if (apt.date) {
+            const [year, month] = apt.date.split('-');
+            const key = `${year}-${month}`;
+
+            if (!monthlySummary[key]) {
+                monthlySummary[key] = {
+                    label: new Date(year, month - 1).toLocaleDateString('pt-BR', {
+                        month: 'long',
+                        year: 'numeric'
+                    }),
+                    agendado: 0,
+                    cancelado: 0,
+                    feito: 0,
+                    reagendado: 0,
+                    total: 0,
+                    revenue: 0
+                };
+            }
+
+            monthlySummary[key][apt.status]++;
+            monthlySummary[key].total++;
+            monthlySummary[key].revenue += apt.value || 0;
+        }
+    });
+
+    // Ordenar por data (mais recente primeiro)
+    const sortedSummary = Object.entries(monthlySummary)
+        .sort((a, b) => b[0].localeCompare(a[0]));
+
+    const container = document.getElementById('monthly-summary');
+
+    if (sortedSummary.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #7f8c8d; padding: 20px;">Nenhum dado disponível</p>';
+        return;
+    }
+
+    let tableHTML = `
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th>📅 Agendado</th>
+                    <th>✅ Feito</th>
+                    <th>🔄 Reagendado</th>
+                    <th>❌ Cancelado</th>
+                    <th>Total</th>
+                    <th>Receita</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    sortedSummary.forEach(([key, data]) => {
+        tableHTML += `
+            <tr>
+                <td><strong>${data.label}</strong></td>
+                <td><span class="status-count agendado">${data.agendado}</span></td>
+                <td><span class="status-count feito">${data.feito}</span></td>
+                <td><span class="status-count reagendado">${data.reagendado}</span></td>
+                <td><span class="status-count cancelado">${data.cancelado}</span></td>
+                <td><strong>${data.total}</strong></td>
+                <td>${formatCurrencyValue(data.revenue)}</td>
+            </tr>
+        `;
+    });
+
+    tableHTML += '</tbody></table>';
+    container.innerHTML = tableHTML;
+}
+
+// Event listener para mudança de período
+document.addEventListener('DOMContentLoaded', () => {
+    const periodSelect = document.getElementById('period-select');
+    if (periodSelect) {
+        periodSelect.addEventListener('change', (e) => {
+            filterDashboardByPeriod(e.target.value);
+        });
+    }
+});
+
+// Filtrar dados por período
+function filterDashboardByPeriod(period) {
+    const today = new Date();
+    let filteredData = [...allAppointmentsData];
+
+    switch (period) {
+        case 'current-month':
+            filteredData = allAppointmentsData.filter(apt => {
+                if (!apt.date) return false;
+                const [year, month] = apt.date.split('-');
+                return year == today.getFullYear() && month == (today.getMonth() + 1).toString().padStart(2, '0');
+            });
+            break;
+
+        case 'last-month':
+            const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1);
+            filteredData = allAppointmentsData.filter(apt => {
+                if (!apt.date) return false;
+                const [year, month] = apt.date.split('-');
+                return year == lastMonth.getFullYear() && month == (lastMonth.getMonth() + 1).toString().padStart(2, '0');
+            });
+            break;
+
+        case 'current-year':
+            filteredData = allAppointmentsData.filter(apt => {
+                if (!apt.date) return false;
+                const [year] = apt.date.split('-');
+                return year == today.getFullYear();
+            });
+            break;
+
+        case 'all-time':
+        default:
+            // Usar todos os dados
+            break;
+    }
+
+    // Atualizar visualizações com dados filtrados
+    const originalData = allAppointmentsData;
+    allAppointmentsData = filteredData;
+
+    updateDashboardMetrics();
+    updateStatusChart();
+
+    // Restaurar dados originais para os gráficos de tendência
+    allAppointmentsData = originalData;
+    updateRevenueChart();
+    updateMonthlySummary();
 }

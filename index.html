@@ -25,6 +25,7 @@
 
         <nav class="tabs">
             <button class="tab-btn active" data-tab="calendario">Calendário</button>
+            <button class="tab-btn" data-tab="dashboard">Dashboard</button>
             <button class="tab-btn" data-tab="novo">Novo Agendamento</button>
             <button class="tab-btn" data-tab="lista">Lista de Agendamentos</button>
         </nav>
@@ -38,6 +39,86 @@
             </div>
             <div id="calendar"></div>
             <div id="day-appointments"></div>
+        </div>
+
+        <!-- Tab Dashboard -->
+        <div id="dashboard-tab" class="tab-content">
+            <div class="dashboard-container">
+                <!-- Cards de Métricas -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">💰</div>
+                        <div class="metric-content">
+                            <h3>Receita Total</h3>
+                            <p class="metric-value" id="total-revenue">R$ 0,00</p>
+                            <small>Todos os agendamentos</small>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">📅</div>
+                        <div class="metric-content">
+                            <h3>Total de Agendamentos</h3>
+                            <p class="metric-value" id="total-appointments">0</p>
+                            <small>Todos os status</small>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">✅</div>
+                        <div class="metric-content">
+                            <h3>Tatuagens Concluídas</h3>
+                            <p class="metric-value" id="completed-count">0</p>
+                            <small>Status: Feito</small>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">⏳</div>
+                        <div class="metric-content">
+                            <h3>Agendamentos Pendentes</h3>
+                            <p class="metric-value" id="pending-count">0</p>
+                            <small>Agendados + Reagendados</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro de Período -->
+                <div class="dashboard-filters">
+                    <h3>📊 Análise por Período</h3>
+                    <div class="filter-row">
+                        <label for="period-select">Período:</label>
+                        <select id="period-select">
+                            <option value="current-month">Mês Atual</option>
+                            <option value="last-month">Mês Anterior</option>
+                            <option value="current-year">Ano Atual</option>
+                            <option value="all-time">Todo o Período</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Status -->
+                <div class="dashboard-section">
+                    <h3>Status dos Agendamentos</h3>
+                    <div class="chart-container">
+                        <div class="bar-chart" id="status-chart"></div>
+                    </div>
+                </div>
+
+                <!-- Receita Mensal -->
+                <div class="dashboard-section">
+                    <h3>Receita Mensal (Últimos 6 meses)</h3>
+                    <div class="chart-container">
+                        <div class="bar-chart horizontal" id="revenue-chart"></div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Resumo por Mês -->
+                <div class="dashboard-section">
+                    <h3>Resumo Mensal Detalhado</h3>
+                    <div class="monthly-summary" id="monthly-summary"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Tab Novo Agendamento -->
@@ -72,9 +153,33 @@
                         placeholder="Informações adicionais, alergias, cuidados especiais..."></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label for="phone">Telefone</label>
-                    <input type="tel" id="phone" placeholder="(00) 00000-0000">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <input type="tel" id="phone" placeholder="(00) 00000-0000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="social-media">Rede Social</label>
+                        <input type="text" id="social-media" placeholder="@usuario ou link">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="value">Valor (R$)</label>
+                        <input type="text" id="value" placeholder="0,00" inputmode="decimal">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">Status *</label>
+                        <select id="status" required>
+                            <option value="agendado">📅 Agendado</option>
+                            <option value="cancelado">❌ Cancelado</option>
+                            <option value="feito">✅ Feito</option>
+                            <option value="reagendado">🔄 Reagendado</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-group">

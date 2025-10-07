@@ -5,7 +5,11 @@ Um sistema web completo e **seguro** para gerenciar agendamentos de tatuagens, d
 ## 🎨 Funcionalidades
 
 - 🔐 **Sistema de Login** - Acesso protegido por autenticação
+- 📊 **Dashboard Completo** - Métricas, gráficos e relatórios detalhados
 - ✅ Criar agendamentos com informações detalhadas
+- 💰 Campo de valor com formatação automática em Real (R$)
+- 📱 Campo de rede social para contato
+- 🏷️ Sistema de status com histórico de alterações
 - 📸 Upload e gerenciamento de múltiplas imagens de referência
 - 🗓️ Visualização em calendário interativo
 - 📋 Lista completa de agendamentos
@@ -183,6 +187,43 @@ agendador/
 ├── firebase-config.js  # Configuração do Firebase
 └── README.md           # Este arquivo
 ```
+
+## 📊 Dashboard e Relatórios
+
+O sistema inclui um **Dashboard completo** com:
+
+- **Métricas Principais:**
+  - 💰 Receita total de todos os agendamentos
+  - 📅 Quantidade total de agendamentos
+  - ✅ Tatuagens concluídas
+  - ⏳ Agendamentos pendentes
+
+- **Gráficos Visuais:**
+  - 📊 Distribuição de agendamentos por status
+  - 💵 Receita mensal dos últimos 6 meses
+  - 📈 Tendências e comparações
+
+- **Resumo Mensal:**
+  - Tabela detalhada com todos os meses
+  - Quantidade de agendamentos por status
+  - Receita total de cada mês
+
+- **Filtros de Período:**
+  - Mês atual
+  - Mês anterior
+  - Ano atual
+  - Todo o período
+
+**Documentação completa:** [DASHBOARD-GUIDE.md](DASHBOARD-GUIDE.md)
+
+## 📚 Documentação Completa
+
+- 📘 [QUICK-START-LOGIN.md](QUICK-START-LOGIN.md) - Configuração rápida em 5 minutos
+- 📗 [LOGIN-SETUP.md](LOGIN-SETUP.md) - Documentação completa do sistema de login
+- 📙 [FIRESTORE-RULES-UPDATE.md](FIRESTORE-RULES-UPDATE.md) - Guia de regras de segurança
+- 📕 [NEW-FIELDS-GUIDE.md](NEW-FIELDS-GUIDE.md) - Guia dos campos valor, rede social e status
+- 📊 [DASHBOARD-GUIDE.md](DASHBOARD-GUIDE.md) - Guia completo do Dashboard
+- 📓 [DEPLOY.md](DEPLOY.md) - Como fazer deploy no GitHub Pages
 
 ## 🎨 Personalização
 
