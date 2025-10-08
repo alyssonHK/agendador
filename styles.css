@@ -5,24 +5,25 @@
 }
 
 :root {
-    /* Paleta Dark inspirada em Maryshmallo */
-    --primary-color: #1a1a1a;
-    --secondary-color: #bdb5be;
-    /* Dourado mais claro e vibrante */
+    /* Paleta Dark inspirada em Maryshmallo.com.br */
+    --primary-color: #1a1f2e;
+    --secondary-color: #dfc4dd;
     --accent-color: #e9a68e;
-    /* Rosa vibrante */
     --success-color: #4ecca3;
-    --bg-color: #0f0f0f;
-    --card-bg: #1e1e1e;
+    --bg-color: #1a1f2e;
+    /* Azul escuro igual ao site */
+    --card-bg: #242938;
+    /* Card levemente mais claro */
     --text-color: #ffffff;
-    /* Branco puro para melhor legibilidade */
-    --text-muted: #cccccc;
-    /* Cinza mais claro */
-    --text-secondary: #b0b0b0;
-    /* Cinza médio */
-    --border-color: #333333;
+    /* Branco puro */
+    --text-muted: #a0a6b5;
+    /* Cinza azulado claro */
+    --text-secondary: #8a8f9e;
+    /* Cinza azulado médio */
+    --border-color: #2d3340;
+    /* Borda sutil azulada */
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    --gradient-primary: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    --gradient-primary: linear-gradient(135deg, #1a1f2e 0%, #242938 100%);
     --gradient-accent: linear-gradient(135deg, #f4d03f 0%, #ff69b4 100%);
 }
 
@@ -302,7 +303,7 @@ header p {
 
 .calendar-day .appointment-count {
     background: var(--secondary-color);
-    color: white;
+    color: rgb(0, 0, 0);
     padding: 2px 8px;
     border-radius: 10px;
     font-size: 0.8em;
@@ -381,6 +382,17 @@ header p {
     transition: all 0.3s;
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-color);
+}
+
+.form-group select option {
+    background: #2a2a2a;
+    color: var(--text-color);
+    padding: 10px;
+}
+
+.form-group select option:checked {
+    background: var(--secondary-color);
+    color: #1a1a1a;
 }
 
 .form-group input:focus,
@@ -612,6 +624,16 @@ header p {
     font-size: 1em;
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-color);
+}
+
+.filter-controls select option {
+    background: #2a2a2a;
+    color: var(--text-color);
+}
+
+.filter-controls select option:checked {
+    background: var(--secondary-color);
+    color: #1a1a1a;
 }
 
 .filter-controls input {
@@ -1288,6 +1310,16 @@ header p {
     color: var(--text-color);
     cursor: pointer;
     transition: border-color 0.3s;
+}
+
+.filter-row select option {
+    background: #2a2a2a;
+    color: var(--text-color);
+}
+
+.filter-row select option:checked {
+    background: var(--secondary-color);
+    color: #1a1a1a;
 }
 
 .filter-row select:focus {
