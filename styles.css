@@ -7,9 +7,9 @@
 :root {
     /* Paleta Dark inspirada em Maryshmallo */
     --primary-color: #1a1a1a;
-    --secondary-color: #c40ee9;
+    --secondary-color: #bdb5be;
     /* Dourado mais claro e vibrante */
-    --accent-color: #ff69b4;
+    --accent-color: #e9a68e;
     /* Rosa vibrante */
     --success-color: #4ecca3;
     --bg-color: #0f0f0f;
@@ -97,11 +97,7 @@ header h1 {
     margin-bottom: 10px;
     font-weight: 700;
     letter-spacing: 1px;
-    background: var(--gradient-accent);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+    color: var(--secondary-color);
 }
 
 header p {
@@ -126,21 +122,17 @@ header p {
     color: var(--secondary-color);
     border: 2px solid var(--secondary-color);
     padding: 8px 20px;
-    border-radius: 25px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
-    text-transform: uppercase;
+    font-weight: 500;
+    transition: all 0.2s ease;
     font-size: 0.85em;
-    letter-spacing: 1px;
 }
 
 .btn-logout:hover {
-    background: var(--gradient-accent);
-    color: white;
-    border-color: transparent;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+    background: var(--secondary-color);
+    color: #1a1a1a;
+    border-color: var(--secondary-color);
 }
 
 /* Tabs */
@@ -294,7 +286,7 @@ header p {
 }
 
 .calendar-day.has-appointments {
-    background: #ac22b1;
+    background: #fe6eae;
     border: 2px solid var(--secondary-color);
     color: #1a1a1a;
 }
@@ -331,25 +323,23 @@ header p {
 }
 
 .btn-new-appointment {
-    background: var(--gradient-accent);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-size: 0.95em;
-    font-weight: 600;
+    background: transparent;
+    color: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(244, 208, 63, 0.3);
+    transition: all 0.2s ease;
     margin-bottom: 20px;
     display: inline-block;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .btn-new-appointment:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(244, 208, 63, 0.4);
+    background: var(--secondary-color);
+    color: #1a1a1a;
+    transform: translateY(-1px);
 }
 
 .btn-new-appointment:active {
@@ -485,27 +475,24 @@ header p {
 .btn-secondary,
 .btn-danger,
 .btn-edit {
-    padding: 14px 35px;
+    padding: 12px 28px;
     border: none;
-    border-radius: 25px;
+    border-radius: 8px;
     font-size: 0.95em;
     cursor: pointer;
-    transition: all 0.3s;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    font-weight: 500;
 }
 
 .btn-primary {
-    background: var(--gradient-accent);
-    color: white;
+    background: var(--secondary-color);
+    color: #1a1a1a;
     flex: 1;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
 .btn-secondary {
@@ -515,30 +502,25 @@ header p {
 }
 
 .btn-secondary:hover {
-    background: var(--border-color);
-    border-color: var(--border-color);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    background: #e74c3c;
     color: white;
-    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
 }
 
 .btn-danger:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
+    background: #c0392b;
 }
 
 .btn-edit {
-    background: var(--gradient-accent);
-    color: white;
-    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+    background: var(--secondary-color);
+    color: #1a1a1a;
 }
 
 .btn-edit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.5);
+    opacity: 0.9;
 }
 
 /* Status Badges */
@@ -1070,10 +1052,7 @@ header p {
     font-size: 2.2em;
     margin-bottom: 10px;
     font-weight: 700;
-    background: var(--gradient-accent);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--secondary-color);
 }
 
 .login-header p {
@@ -1121,28 +1100,25 @@ header p {
 
 .btn-login {
     width: 100%;
-    padding: 16px;
-    background: var(--gradient-accent);
-    color: white;
+    padding: 14px;
+    background: var(--secondary-color);
+    color: #1a1a1a;
     border: none;
-    border-radius: 25px;
+    border-radius: 8px;
     font-size: 1em;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s ease;
     margin-top: 15px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
 .btn-login:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
 .btn-login:active {
-    transform: translateY(-1px);
+    transform: translateY(0);
 }
 
 .btn-login:disabled {
@@ -1234,34 +1210,19 @@ header p {
     gap: 15px;
     border: 1px solid var(--border-color);
     position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.metric-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: -30px;
-    width: 80px;
-    height: 100%;
-    background: var(--gradient-accent);
-    opacity: 0.08;
-    transform: skewX(-15deg);
+    transition: border-color 0.2s ease;
 }
 
 .metric-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     border-color: var(--secondary-color);
 }
 
 .metric-icon {
     font-size: 2.8em;
-    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
     position: relative;
     z-index: 1;
     flex-shrink: 0;
+    opacity: 0.9;
 }
 
 .metric-content {
@@ -1283,10 +1244,7 @@ header p {
 
 .metric-value {
     font-size: 1.8em;
-    background: var(--gradient-accent);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--secondary-color);
     font-weight: bold;
     margin: 5px 0;
 }
@@ -1388,17 +1346,15 @@ header p {
 
 .bar {
     width: 100%;
-    background: var(--gradient-accent);
+    background: var(--secondary-color);
     border-radius: 8px 8px 0 0;
-    transition: all 0.5s ease;
+    transition: opacity 0.2s ease;
     position: relative;
     min-height: 20px;
-    box-shadow: 0 -2px 10px rgba(244, 208, 63, 0.3);
 }
 
 .bar:hover {
     opacity: 0.8;
-    transform: scaleY(1.05);
 }
 
 .bar-value {
@@ -1453,14 +1409,14 @@ header p {
 
 .horizontal-bar {
     height: 100%;
-    background: var(--gradient-accent);
+    background: var(--secondary-color);
     border-radius: 15px;
-    transition: width 0.8s ease;
+    transition: width 0.5s ease;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     padding-right: 10px;
-    color: white;
+    color: #1a1a1a;
     font-weight: bold;
     font-size: 0.85em;
     min-width: 50px;
