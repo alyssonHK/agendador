@@ -241,11 +241,76 @@ header p {
     width: 100%;
 }
 
+/* Tab with gear (lista) */
+.tab-with-gear {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tab-gear {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 8px;
+    border-radius: 8px;
+    color: var(--text-muted);
+    display: none;
+    /* escondido por padrão; mostrado via JS quando necessário */
+}
+
+.tab-gear:hover {
+    background: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Popover */
+.popover {
+    position: absolute;
+    min-width: 220px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-hover);
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 2000;
+}
+
+.popover.hidden {
+    display: none;
+}
+
+.popover-arrow {
+    position: absolute;
+    top: -8px;
+    left: 20px;
+    width: 16px;
+    height: 8px;
+    background: var(--card-bg);
+    transform: rotate(45deg);
+    border-left: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.popover-body h4 {
+    margin: 0 0 8px 0;
+    font-size: 0.95em;
+}
+
+.popover-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    justify-content: flex-end;
+}
+
 .tab-content {
     display: none;
     padding: 32px;
     animation: fadeIn var(--transition-speed) ease;
-    max-width: 1200px;
+    max-width: 1400px;
+    /* aumentar para suportar 5 cards lado a lado */
     margin: 0 auto;
 }
 
@@ -1301,22 +1366,24 @@ header p {
 /* Cards de Métricas */
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(5, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
 }
 
 .metric-card {
     background: var(--card-bg);
     color: var(--text-color);
-    padding: 24px;
+    padding: 16px;
     border-radius: 12px;
     display: flex;
-    align-items: center;
-    gap: 16px;
+    align-items: flex-start;
+    gap: 12px;
     border: 1px solid var(--border-color);
     position: relative;
     transition: all var(--transition-speed) ease;
+    min-width: 0;
+    /* permite encolher corretamente dentro da grid */
 }
 
 .metric-card:hover {
@@ -1326,40 +1393,47 @@ header p {
 }
 
 .metric-icon {
-    font-size: 2.8em;
-    position: relative;
-    z-index: 1;
-    flex-shrink: 0;
-    opacity: 0.9;
+    font-size: 1.6rem;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    border-radius: 8px;
 }
 
 .metric-content {
-    flex: 1;
-    position: relative;
-    z-index: 1;
+    display: flex;
+    flex-direction: column;
     min-width: 0;
+    flex: 1 1 auto;
+}
+
+.metric-value {
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    color: var(--secondary-color);
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+    display: block;
+}
+
+.metric-content small {
+    color: var(--text-muted);
+    font-size: 0.85rem;
 }
 
 .metric-content h3 {
     font-size: 0.75em;
     color: var(--text-color);
-    /* Branco para melhor legibilidade */
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-}
-
-.metric-value {
-    font-size: 1.8em;
-    color: var(--secondary-color);
-    font-weight: bold;
-    margin: 5px 0;
-}
-
-.metric-content small {
-    color: var(--text-muted);
-    font-size: 0.75em;
 }
 
 /* Filtros do Dashboard */
@@ -1432,20 +1506,24 @@ header p {
     font-weight: 600;
 }
 
-/* Gráficos de Barras */
+/* Gráficos de Barras (compacto) */
 .chart-container {
-    min-height: 300px;
+    min-height: 180px;
+    /* reduzido de 300px */
 }
 
 .bar-chart {
     display: flex;
     align-items: flex-end;
     justify-content: space-around;
-    height: 300px;
-    padding: 20px;
+    height: 180px;
+    /* reduzido de 300px */
+    padding: 12px;
+    /* menos padding */
     background: transparent;
     border-radius: 8px;
-    gap: 15px;
+    gap: 10px;
+    /* gap menor */
 }
 
 [data-theme="light"] .bar-chart {
@@ -1463,17 +1541,20 @@ header p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    min-width: 80px;
+    gap: 6px;
+    /* menor gap vertical */
+    min-width: 60px;
+    /* menor min width */
 }
 
 .bar {
     width: 100%;
     background: var(--secondary-color);
-    border-radius: 8px 8px 0 0;
+    border-radius: 6px 6px 0 0;
     transition: opacity 0.2s ease;
     position: relative;
-    min-height: 20px;
+    min-height: 14px;
+    /* menor altura mínima */
 }
 
 .bar:hover {
@@ -1482,12 +1563,13 @@ header p {
 
 .bar-value {
     position: absolute;
-    top: -25px;
+    top: -18px;
+    /* mais próximo do topo do bar */
     left: 50%;
     transform: translateX(-50%);
     font-weight: bold;
     color: var(--text-color);
-    font-size: 0.9em;
+    font-size: 0.85em;
 }
 
 .bar-label {
@@ -1523,9 +1605,10 @@ header p {
 
 .horizontal-bar-container {
     flex: 1;
-    height: 30px;
+    height: 22px;
+    /* mais compacto */
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
+    border-radius: 12px;
     overflow: hidden;
     position: relative;
 }
@@ -1623,7 +1706,8 @@ header p {
 /* Responsivo Dashboard */
 @media (max-width: 1200px) {
     .metrics-grid {
-        grid-template-columns: repeat(2, 1fr);
+        /* Reduz para 3 colunas em telas médias */
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -1662,4 +1746,5 @@ header p {
         flex-direction: column;
         align-items: stretch;
     }
+
 }

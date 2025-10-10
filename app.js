@@ -3,6 +3,7 @@ let currentMonth = new Date();
 let currentEditingId = null;
 let imageFiles = [];
 let existingImages = []; // Imagens já salvas no Firebase
+let analysisMonth = null; // 'YYYY-MM' ou null => filtro aplicado para análise no dashboard
 
 // Elementos do DOM
 const tabButtons = document.querySelectorAll('.tab-btn');
@@ -25,6 +26,11 @@ const cancelBtn = document.getElementById('cancel-btn');
 const valueInput = document.getElementById('value');
 const statusSelect = document.getElementById('status');
 const themeToggle = document.getElementById('theme-toggle');
+const listaGearBtn = document.getElementById('lista-gear');
+const listaGearPopover = document.getElementById('lista-gear-popover');
+const listaMonthSelect = document.getElementById('lista-month-select');
+const listaApplyBtn = document.getElementById('lista-apply');
+const listaCancelBtn = document.getElementById('lista-cancel');
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
@@ -46,6 +52,13 @@ function initializeTabs() {
 
             button.classList.add('active');
             document.getElementById(`${targetTab}-tab`).classList.add('active');
+
+            // Mostrar a engrenagem somente quando estivermos na aba 'dashboard'
+            if (listaGearBtn) {
+                listaGearBtn.style.display = targetTab === 'dashboard' ? 'inline-flex' : 'none';
+                // fechar popover se trocou de aba
+                if (targetTab !== 'dashboard' && listaGearPopover) closeListaPopover();
+            }
 
             if (targetTab === 'calendario') {
                 renderCalendar();
@@ -72,6 +85,26 @@ function setupEventListeners() {
 
     if (themeToggle) {
         themeToggle.addEventListener('click', toggleTheme);
+    }
+
+    // Popover da engrenagem (Lista) - aparece apenas na aba dashboard
+    if (listaGearBtn && listaGearPopover) {
+        listaGearBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleListaPopover(e.currentTarget);
+        });
+
+        // fechar ao clicar fora
+        window.addEventListener('click', (ev) => {
+            if (!listaGearPopover.contains(ev.target) && ev.target !== listaGearBtn) {
+                closeListaPopover();
+            }
+        });
+
+        if (listaCancelBtn) listaCancelBtn.addEventListener('click', closeListaPopover);
+        if (listaApplyBtn) listaApplyBtn.addEventListener('click', applyListaMonthFilter);
+
+        populateListaMonths();
     }
 
     window.addEventListener('click', (e) => {
@@ -611,6 +644,85 @@ function filterAppointments() {
     });
 }
 
+// ---------- FILTRO POR MÊS (POPOVER) ----------
+function populateListaMonths() {
+    if (!listaMonthSelect) return;
+    listaMonthSelect.innerHTML = '';
+
+    // Opção todos
+    const allOpt = document.createElement('option');
+    allOpt.value = 'all';
+    allOpt.textContent = 'Todos os meses';
+    listaMonthSelect.appendChild(allOpt);
+
+    const today = new Date();
+    for (let i = 0; i < 12; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        listaMonthSelect.appendChild(opt);
+    }
+}
+
+function toggleListaPopover(button) {
+    if (!listaGearPopover) return;
+    if (!listaGearPopover.classList.contains('hidden')) {
+        closeListaPopover();
+        return;
+    }
+
+    // posicionar popover ao lado do botão
+    const rect = button.getBoundingClientRect();
+    const pop = listaGearPopover;
+    pop.style.left = `${rect.right + 8 + window.scrollX}px`;
+    pop.style.top = `${rect.top + window.scrollY}px`;
+    pop.classList.remove('hidden');
+    pop.setAttribute('aria-hidden', 'false');
+}
+
+function closeListaPopover() {
+    if (!listaGearPopover) return;
+    listaGearPopover.classList.add('hidden');
+    listaGearPopover.setAttribute('aria-hidden', 'true');
+}
+
+function applyListaMonthFilter() {
+    if (!listaMonthSelect) return;
+    const val = listaMonthSelect.value;
+    closeListaPopover();
+
+    // aplicar filtro para análise do dashboard
+    if (val === 'all') {
+        analysisMonth = null;
+    } else {
+        analysisMonth = val;
+    }
+
+    // Se estivermos no dashboard, atualizar as visualizações com o filtro
+    const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab;
+    if (activeTab === 'dashboard') {
+        updateDashboardMetrics();
+        updateStatusChart();
+        updateRevenueChart();
+        updateMonthlySummary();
+    }
+}
+
+// (mantemos a funcionalidade de filtrar a lista separada via busca/status; o popover agora filtra o dashboard)
+
+// Retorna os dados do dashboard considerando o filtro `analysisMonth`.
+function getDashboardFilteredData() {
+    if (!analysisMonth) return allAppointmentsData;
+    return allAppointmentsData.filter(apt => {
+        if (!apt.date) return false;
+        const [year, month] = apt.date.split('-');
+        const key = `${year}-${month}`;
+        return key === analysisMonth;
+    });
+}
+
 // Detalhes do Agendamento
 async function showAppointmentDetail(id) {
     try {
@@ -834,17 +946,41 @@ async function loadDashboardData() {
 
 // Atualizar métricas principais
 function updateDashboardMetrics() {
-    const totalRevenue = allAppointmentsData.reduce((sum, apt) => sum + (apt.value || 0), 0);
-    const totalAppointments = allAppointmentsData.length;
-    const completedCount = allAppointmentsData.filter(apt => apt.status === 'feito').length;
-    const pendingCount = allAppointmentsData.filter(apt =>
+    const data = getDashboardFilteredData();
+
+    // Receita Atual: soma apenas das tattoos com status 'feito'
+    const currentRevenue = data
+        .filter(apt => apt.status === 'feito')
+        .reduce((sum, apt) => sum + (apt.value || 0), 0);
+
+    const totalAppointments = data.length;
+    const completedCount = data.filter(apt => apt.status === 'feito').length;
+    const pendingCount = data.filter(apt =>
         apt.status === 'agendado' || apt.status === 'reagendado'
     ).length;
 
-    document.getElementById('total-revenue').textContent = formatCurrencyValue(totalRevenue);
+    // Valor Estimado do Mês: se analysisMonth estiver definido, soma de todas as tattoos desse mês
+    let estimatedMonthValue = 0;
+    if (analysisMonth) {
+        estimatedMonthValue = data.reduce((sum, apt) => sum + (apt.value || 0), 0);
+    } else {
+        const today = new Date();
+        const monthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+        estimatedMonthValue = allAppointmentsData.reduce((sum, apt) => {
+            if (!apt.date) return sum;
+            const [year, month] = apt.date.split('-');
+            const key = `${year}-${month}`;
+            if (key === monthKey) return sum + (apt.value || 0);
+            return sum;
+        }, 0);
+    }
+
+    document.getElementById('total-revenue').textContent = formatCurrencyValue(currentRevenue);
     document.getElementById('total-appointments').textContent = totalAppointments;
     document.getElementById('completed-count').textContent = completedCount;
     document.getElementById('pending-count').textContent = pendingCount;
+    const estimatedEl = document.getElementById('estimated-month-value');
+    if (estimatedEl) estimatedEl.textContent = formatCurrencyValue(estimatedMonthValue);
 }
 
 // Formatar valor para exibição
@@ -857,29 +993,17 @@ function formatCurrencyValue(value) {
 
 // Gráfico de Status
 function updateStatusChart() {
-    const statusCounts = {
-        agendado: 0,
-        cancelado: 0,
-        feito: 0,
-        reagendado: 0
-    };
+    const data = getDashboardFilteredData();
 
-    allAppointmentsData.forEach(apt => {
-        if (statusCounts.hasOwnProperty(apt.status)) {
-            statusCounts[apt.status]++;
-        }
+    const statusCounts = { agendado: 0, cancelado: 0, feito: 0, reagendado: 0 };
+    data.forEach(apt => {
+        if (statusCounts.hasOwnProperty(apt.status)) statusCounts[apt.status]++;
     });
 
     const maxCount = Math.max(...Object.values(statusCounts), 1);
     const chartContainer = document.getElementById('status-chart');
 
-    const statusLabels = {
-        agendado: '📅 Agendado',
-        cancelado: '❌ Cancelado',
-        feito: '✅ Feito',
-        reagendado: '🔄 Reagendado'
-    };
-
+    const statusLabels = { agendado: '📅 Agendado', cancelado: '❌ Cancelado', feito: '✅ Feito', reagendado: '🔄 Reagendado' };
     const statusColors = {
         agendado: 'linear-gradient(to top, #3498db, #2980b9)',
         cancelado: 'linear-gradient(to top, #e74c3c, #c0392b)',
@@ -888,11 +1012,9 @@ function updateStatusChart() {
     };
 
     chartContainer.innerHTML = '';
-
     Object.keys(statusCounts).forEach(status => {
         const count = statusCounts[status];
         const height = maxCount > 0 ? (count / maxCount) * 100 : 0;
-
         const barItem = document.createElement('div');
         barItem.className = 'bar-item';
         barItem.innerHTML = `
@@ -901,13 +1023,13 @@ function updateStatusChart() {
             </div>
             <div class="bar-label">${statusLabels[status]}</div>
         `;
-
         chartContainer.appendChild(barItem);
     });
 }
 
 // Gráfico de Receita Mensal (últimos 6 meses)
 function updateRevenueChart() {
+    const data = getDashboardFilteredData();
     const monthlyRevenue = {};
     const today = new Date();
 
@@ -915,21 +1037,15 @@ function updateRevenueChart() {
     for (let i = 5; i >= 0; i--) {
         const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
         const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        monthlyRevenue[key] = {
-            value: 0,
-            label: date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })
-        };
+        monthlyRevenue[key] = { value: 0, label: date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }) };
     }
 
-    // Calcular receita por mês
-    allAppointmentsData.forEach(apt => {
+    // Calcular receita por mês usando os dados filtrados (se analysisMonth, só terá aquele mês)
+    data.forEach(apt => {
         if (apt.date && apt.value) {
             const [year, month] = apt.date.split('-');
             const key = `${year}-${month}`;
-
-            if (monthlyRevenue[key]) {
-                monthlyRevenue[key].value += apt.value;
-            }
+            if (monthlyRevenue[key]) monthlyRevenue[key].value += apt.value;
         }
     });
 
@@ -937,38 +1053,33 @@ function updateRevenueChart() {
     const chartContainer = document.getElementById('revenue-chart');
     chartContainer.innerHTML = '';
 
-    Object.entries(monthlyRevenue).forEach(([key, data]) => {
-        const percentage = maxRevenue > 0 ? (data.value / maxRevenue) * 100 : 0;
-
+    Object.entries(monthlyRevenue).forEach(([key, dataItem]) => {
+        const height = maxRevenue > 0 ? (dataItem.value / maxRevenue) * 100 : 0;
         const barItem = document.createElement('div');
-        barItem.className = 'horizontal-bar-item';
+        barItem.className = 'bar-item';
         barItem.innerHTML = `
-            <div class="horizontal-bar-label">${data.label}</div>
-            <div class="horizontal-bar-container">
-                <div class="horizontal-bar" style="width: ${percentage}%;"></div>
+            <div class="bar" style="height: ${height}%; background: linear-gradient(to top, #f39c12, #f1c40f);">
+                <span class="bar-value">${formatCurrencyValue(dataItem.value)}</span>
             </div>
-            <div class="horizontal-bar-value">${formatCurrencyValue(data.value)}</div>
+            <div class="bar-label">${dataItem.label}</div>
         `;
-
         chartContainer.appendChild(barItem);
     });
 }
 
 // Resumo Mensal Detalhado
 function updateMonthlySummary() {
+    const data = getDashboardFilteredData();
     const monthlySummary = {};
 
-    allAppointmentsData.forEach(apt => {
+    data.forEach(apt => {
         if (apt.date) {
             const [year, month] = apt.date.split('-');
             const key = `${year}-${month}`;
 
             if (!monthlySummary[key]) {
                 monthlySummary[key] = {
-                    label: new Date(year, month - 1).toLocaleDateString('pt-BR', {
-                        month: 'long',
-                        year: 'numeric'
-                    }),
+                    label: new Date(year, month - 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
                     agendado: 0,
                     cancelado: 0,
                     feito: 0,

@@ -33,7 +33,10 @@
             <button class="tab-btn active" data-tab="calendario">Calendário</button>
             <button class="tab-btn" data-tab="dashboard">Dashboard</button>
             <button class="tab-btn" data-tab="novo">Novo Agendamento</button>
-            <button class="tab-btn" data-tab="lista">Lista de Agendamentos</button>
+            <div class="tab-with-gear">
+                <button class="tab-btn" data-tab="lista" id="lista-tab-btn">Lista de Agendamentos</button>
+                <button id="lista-gear" class="tab-gear" title="Configurar lista">⚙️</button>
+            </div>
         </nav>
 
         <!-- Tab Calendário -->
@@ -55,9 +58,18 @@
                     <div class="metric-card">
                         <div class="metric-icon">💰</div>
                         <div class="metric-content">
-                            <h3>Receita Total</h3>
+                            <h3>Receita Atual</h3>
                             <p class="metric-value" id="total-revenue">R$ 0,00</p>
-                            <small>Todos os agendamentos</small>
+                            <small>Soma de agendamentos com status "Feito"</small>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">📈</div>
+                        <div class="metric-content">
+                            <h3>Valor Estimado do Mês</h3>
+                            <p class="metric-value" id="estimated-month-value">R$ 0,00</p>
+                            <small>Soma de todas as tattoos do mês</small>
                         </div>
                     </div>
 
@@ -89,19 +101,7 @@
                     </div>
                 </div>
 
-                <!-- Filtro de Período -->
-                <div class="dashboard-filters">
-                    <h3>📊 Análise por Período</h3>
-                    <div class="filter-row">
-                        <label for="period-select">Período:</label>
-                        <select id="period-select">
-                            <option value="current-month">Mês Atual</option>
-                            <option value="last-month">Mês Anterior</option>
-                            <option value="current-year">Ano Atual</option>
-                            <option value="all-time">Todo o Período</option>
-                        </select>
-                    </div>
-                </div>
+                <!-- Filtro de Período removido (mover para popover na aba Lista) -->
 
                 <!-- Gráfico de Status -->
                 <div class="dashboard-section">
@@ -115,7 +115,7 @@
                 <div class="dashboard-section">
                     <h3>Receita Mensal (Últimos 6 meses)</h3>
                     <div class="chart-container">
-                        <div class="bar-chart horizontal" id="revenue-chart"></div>
+                        <div class="bar-chart" id="revenue-chart"></div>
                     </div>
                 </div>
 
@@ -250,6 +250,21 @@
 
             <div class="login-footer">
                 <p>Esqueceu a senha? <a href="#" id="reset-password-link">Recuperar senha</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popover de configuração da Lista (seleção de mês) -->
+    <div id="lista-gear-popover" class="popover hidden" role="dialog" aria-hidden="true">
+        <div class="popover-arrow"></div>
+        <div class="popover-body">
+            <h4>Filtrar por mês</h4>
+            <select id="lista-month-select">
+                <!-- opções preenchidas via JS -->
+            </select>
+            <div class="popover-actions">
+                <button id="lista-apply" class="btn-primary">Aplicar</button>
+                <button id="lista-cancel" class="btn-secondary">Fechar</button>
             </div>
         </div>
     </div>
