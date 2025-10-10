@@ -5,36 +5,54 @@
 }
 
 :root {
-    /* Paleta Dark inspirada em Maryshmallo.com.br */
     --primary-color: #1a1f2e;
-    --secondary-color: #dfc4dd;
-    --accent-color: #e9a68e;
-    --success-color: #4ecca3;
-    --bg-color: #1a1f2e;
-    /* Azul escuro igual ao site */
-    --card-bg: #242938;
-    /* Card levemente mais claro */
-    --text-color: #ffffff;
-    /* Branco puro */
-    --text-muted: #a0a6b5;
-    /* Cinza azulado claro */
-    --text-secondary: #8a8f9e;
-    /* Cinza azulado médio */
-    --border-color: #2d3340;
-    /* Borda sutil azulada */
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    --gradient-primary: linear-gradient(135deg, #1a1f2e 0%, #242938 100%);
-    --gradient-accent: linear-gradient(135deg, #f4d03f 0%, #ff69b4 100%);
+    --secondary-color: #f59e0b;
+    --accent-color: #3b82f6;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --bg-color: #0f1419;
+    --card-bg: #1a1f2e;
+    --text-color: #f3f4f6;
+    --text-muted: #9ca3af;
+    --text-secondary: #6b7280;
+    --border-color: #2d3748;
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --gradient-primary: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+    --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    --transition-speed: 0.3s;
+}
+
+[data-theme="light"] {
+    --primary-color: #ffffff;
+    --secondary-color: #f59e0b;
+    --accent-color: #3b82f6;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-color: #1e293b;
+    --text-muted: #64748b;
+    --text-secondary: #94a3b8;
+    --border-color: #e2e8f0;
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.12);
+    --gradient-primary: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     background: var(--bg-color);
     min-height: 100vh;
-    padding: 20px;
+    padding: 0;
     color: var(--text-color);
     position: relative;
     overflow-x: hidden;
+    transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+    line-height: 1.5;
 }
 
 body::before {
@@ -45,41 +63,46 @@ body::before {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(255, 105, 180, 0.05) 0%, transparent 50%);
+        radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(245, 158, 11, 0.05) 0%, transparent 40%);
     pointer-events: none;
     z-index: 0;
+    opacity: 1;
+    transition: opacity var(--transition-speed) ease;
+}
+
+[data-theme="light"] body::before {
+    background:
+        radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(245, 158, 11, 0.03) 0%, transparent 40%);
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     background: var(--card-bg);
-    border-radius: 20px;
-    box-shadow: var(--shadow);
+    border-radius: 0;
+    box-shadow: none;
     overflow: hidden;
-    border: 1px solid var(--border-color);
+    border: none;
     position: relative;
     z-index: 1;
+    min-height: 100vh;
+    transition: background var(--transition-speed) ease;
 }
 
 header {
-    background: var(--gradient-primary);
-    color: white;
-    padding: 30px;
-    border-bottom: 2px solid var(--secondary-color);
-    position: relative;
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-speed) ease;
 }
 
-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: var(--gradient-accent);
-}
 
 .header-content {
     display: flex;
@@ -94,11 +117,12 @@ header::after {
 }
 
 header h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
+    font-size: 1.75rem;
+    margin-bottom: 4px;
     font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--secondary-color);
+    letter-spacing: -0.5px;
+    color: var(--text-color);
+    transition: color var(--transition-speed) ease;
 }
 
 header p {
@@ -120,86 +144,109 @@ header p {
 
 .btn-logout {
     background: transparent;
-    color: var(--secondary-color);
-    border: 2px solid var(--secondary-color);
-    padding: 8px 20px;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
-    transition: all 0.2s ease;
-    font-size: 0.85em;
+    transition: all var(--transition-speed) ease;
+    font-size: 0.875rem;
 }
 
 .btn-logout:hover {
-    background: var(--secondary-color);
-    color: #1a1a1a;
-    border-color: var(--secondary-color);
+    background: var(--border-color);
+    color: var(--text-color);
+    border-color: var(--text-muted);
+}
+
+.theme-toggle {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.25rem;
+    transition: all var(--transition-speed) ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.theme-toggle:hover {
+    background: var(--border-color);
+    border-color: var(--text-muted);
+    transform: rotate(20deg);
 }
 
 /* Tabs */
 .tabs {
     display: flex;
-    background: var(--primary-color);
+    background: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
-    position: relative;
+    position: sticky;
+    top: 73px;
+    z-index: 99;
+    backdrop-filter: blur(10px);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
-.tabs::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: var(--gradient-accent);
-    opacity: 0.3;
+.tabs::-webkit-scrollbar {
+    display: none;
 }
+
 
 .tab-btn {
     flex: 1;
-    padding: 18px;
+    min-width: max-content;
+    padding: 16px 24px;
     background: transparent;
     border: none;
     color: var(--text-muted);
-    font-size: 0.95em;
+    font-size: 0.875rem;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all var(--transition-speed) ease;
     font-weight: 500;
     position: relative;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 .tab-btn::after {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     width: 0;
-    height: 3px;
-    background: var(--gradient-accent);
-    transition: width 0.3s ease;
+    height: 2px;
+    background: var(--secondary-color);
+    transition: width var(--transition-speed) ease;
 }
 
 .tab-btn:hover {
     color: var(--text-color);
-    background: rgba(255, 255, 255, 0.05);
+    background: transparent;
 }
 
 .tab-btn.active {
-    color: white;
+    color: var(--text-color);
     font-weight: 600;
 }
 
 .tab-btn.active::after {
-    width: 60%;
+    width: 100%;
 }
 
 .tab-content {
     display: none;
-    padding: 30px;
-    animation: fadeIn 0.3s;
+    padding: 32px;
+    animation: fadeIn var(--transition-speed) ease;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .tab-content.active {
@@ -228,22 +275,24 @@ header p {
 
 .calendar-controls button {
     padding: 10px 20px;
-    background: var(--accent-color);
+    background: var(--secondary-color);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all var(--transition-speed) ease;
 }
 
 .calendar-controls button:hover {
-    background: #2980b9;
+    background: var(--warning-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 .calendar-controls h2 {
-    font-size: 1.8em;
+    font-size: 1.5rem;
     color: var(--text-color);
-    /* Branco para melhor legibilidade */
+    font-weight: 600;
 }
 
 #calendar {
@@ -254,26 +303,34 @@ header p {
 }
 
 .calendar-day-header {
-    background: var(--primary-color);
-    color: white;
-    padding: 10px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 12px;
     text-align: center;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .calendar-day-header {
+    background: var(--bg-color);
 }
 
 .calendar-day {
-    background: var(--bg-color);
-    padding: 10px;
+    background: var(--card-bg);
+    padding: 12px;
     min-height: 100px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all var(--transition-speed) ease;
     position: relative;
+    border: 1px solid var(--border-color);
 }
 
 .calendar-day:hover {
-    background: #d5dbdb;
-    transform: scale(1.02);
+    background: var(--border-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
 }
 
 .calendar-day.other-month {
@@ -281,15 +338,16 @@ header p {
 }
 
 .calendar-day.today {
-    background: var(--accent-color);
+    background: var(--secondary-color);
     color: white;
-    font-weight: bold;
+    font-weight: 600;
+    border-color: var(--secondary-color);
 }
 
 .calendar-day.has-appointments {
-    background: #fe6eae;
-    border: 2px solid var(--secondary-color);
-    color: #1a1a1a;
+    background: var(--accent-color);
+    border: 2px solid var(--accent-color);
+    color: white;
 }
 
 .calendar-day.has-appointments .day-number {
@@ -303,19 +361,21 @@ header p {
 
 .calendar-day .appointment-count {
     background: var(--secondary-color);
-    color: rgb(0, 0, 0);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.8em;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
     display: inline-block;
-    margin-top: 5px;
+    margin-top: 6px;
 }
 
 #day-appointments {
-    background: var(--bg-color);
+    background: var(--card-bg);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-top: 20px;
+    border: 1px solid var(--border-color);
 }
 
 #day-appointments h3 {
@@ -324,23 +384,23 @@ header p {
 }
 
 .btn-new-appointment {
-    background: transparent;
-    color: var(--secondary-color);
-    border: 2px solid var(--secondary-color);
+    background: var(--secondary-color);
+    color: white;
+    border: none;
     padding: 10px 20px;
     border-radius: 8px;
-    font-size: 0.9em;
+    font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-speed) ease;
     margin-bottom: 20px;
     display: inline-block;
 }
 
 .btn-new-appointment:hover {
-    background: var(--secondary-color);
-    color: #1a1a1a;
+    background: var(--warning-color);
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 .btn-new-appointment:active {
@@ -375,13 +435,19 @@ header p {
 .form-group textarea,
 .form-group select {
     width: 100%;
-    padding: 14px;
+    padding: 12px 16px;
     border: 1px solid var(--border-color);
-    border-radius: 10px;
-    font-size: 1em;
-    transition: all 0.3s;
-    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    transition: all var(--transition-speed) ease;
+    background: var(--card-bg);
     color: var(--text-color);
+}
+
+[data-theme="light"] .form-group input,
+[data-theme="light"] .form-group textarea,
+[data-theme="light"] .form-group select {
+    background: var(--bg-color);
 }
 
 .form-group select option {
@@ -400,8 +466,7 @@ header p {
 .form-group select:focus {
     outline: none;
     border-color: var(--secondary-color);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 3px rgba(244, 208, 63, 0.2);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
 .form-group input::placeholder,
@@ -487,82 +552,105 @@ header p {
 .btn-secondary,
 .btn-danger,
 .btn-edit {
-    padding: 12px 28px;
+    padding: 10px 20px;
     border: none;
     border-radius: 8px;
-    font-size: 0.95em;
+    font-size: 0.875rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-speed) ease;
     font-weight: 500;
 }
 
 .btn-primary {
     background: var(--secondary-color);
-    color: #1a1a1a;
+    color: white;
     flex: 1;
 }
 
 .btn-primary:hover {
-    opacity: 0.9;
+    background: var(--warning-color);
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 .btn-secondary {
     background: transparent;
     color: var(--text-color);
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--border-color);
+    border-color: var(--text-muted);
 }
 
 .btn-danger {
-    background: #e74c3c;
+    background: var(--danger-color);
     color: white;
 }
 
 .btn-danger:hover {
-    background: #c0392b;
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .btn-edit {
-    background: var(--secondary-color);
-    color: #1a1a1a;
+    background: var(--accent-color);
+    color: white;
 }
 
 .btn-edit:hover {
-    opacity: 0.9;
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 /* Status Badges */
 .status-badge {
     display: inline-block;
-    padding: 5px 12px;
-    border-radius: 15px;
-    font-size: 0.85em;
-    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .status-badge.agendado {
-    background: #3498db;
-    color: white;
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent-color);
 }
 
 .status-badge.cancelado {
-    background: #e74c3c;
-    color: white;
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger-color);
 }
 
 .status-badge.feito {
-    background: #27ae60;
-    color: white;
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success-color);
 }
 
 .status-badge.reagendado {
-    background: #f39c12;
-    color: white;
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning-color);
+}
+
+[data-theme="light"] .status-badge.agendado {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+[data-theme="light"] .status-badge.cancelado {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+[data-theme="light"] .status-badge.feito {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+[data-theme="light"] .status-badge.reagendado {
+    background: rgba(245, 158, 11, 0.1);
 }
 
 /* Value Display */
@@ -652,38 +740,22 @@ header p {
 
 .appointment-card {
     background: var(--card-bg);
-    padding: 25px;
-    border-radius: 15px;
+    padding: 20px;
+    border-radius: 12px;
     border: 1px solid var(--border-color);
-    border-left: 4px solid var(--accent-color);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    border-left: 3px solid var(--accent-color);
+    transition: all var(--transition-speed) ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
     transform: translateY(0);
 }
 
-.appointment-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--gradient-accent);
-    opacity: 1;
-    transition: width 0.3s ease, opacity 0.3s ease;
-}
 
 .appointment-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    border-color: var(--secondary-color);
-}
-
-.appointment-card:hover::before {
-    width: 100%;
-    opacity: 0.05;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    border-left-color: var(--secondary-color);
 }
 
 .appointment-card.past {
@@ -693,7 +765,12 @@ header p {
 
 .appointment-card.today {
     border-left-color: var(--secondary-color);
-    background: rgba(212, 175, 55, 0.05);
+    background: var(--card-bg);
+    box-shadow: 0 0 0 1px var(--secondary-color) inset;
+}
+
+[data-theme="light"] .appointment-card.today {
+    background: rgba(245, 158, 11, 0.05);
 }
 
 .appointment-card h3 {
@@ -761,13 +838,14 @@ header p {
 
 .modal-content {
     background-color: var(--card-bg);
-    padding: 30px;
-    border-radius: 10px;
+    padding: 32px;
+    border-radius: 12px;
     max-width: 800px;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
-    animation: slideUp 0.3s;
+    animation: slideUp var(--transition-speed) ease;
+    border: 1px solid var(--border-color);
 }
 
 @keyframes slideUp {
@@ -915,12 +993,17 @@ header p {
 .empty-state {
     text-align: center;
     padding: 60px 20px;
-    color: var(--border-color);
+    color: var(--text-muted);
 }
 
 .empty-state h3 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.empty-state p {
+    color: var(--text-muted);
 }
 
 /* Responsive */
@@ -1020,7 +1103,7 @@ header p {
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    animation: fadeIn 0.5s;
+    animation: fadeIn var(--transition-speed) ease;
 }
 
 .login-screen::before {
@@ -1031,8 +1114,8 @@ header p {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(255, 105, 180, 0.1) 0%, transparent 50%);
+        radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(245, 158, 11, 0.08) 0%, transparent 40%);
     pointer-events: none;
 }
 
@@ -1042,13 +1125,13 @@ header p {
 
 .login-container {
     background: var(--card-bg);
-    border-radius: 20px;
-    padding: 50px;
+    border-radius: 16px;
+    padding: 48px;
     max-width: 420px;
     width: 90%;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-hover);
     border: 1px solid var(--border-color);
-    animation: slideUp 0.5s;
+    animation: slideUp var(--transition-speed) ease;
     position: relative;
     z-index: 1;
 }
@@ -1071,10 +1154,10 @@ header p {
 }
 
 .login-header h1 {
-    font-size: 2.2em;
-    margin-bottom: 10px;
+    font-size: 1.875rem;
+    margin-bottom: 8px;
     font-weight: 700;
-    color: var(--secondary-color);
+    color: var(--text-color);
 }
 
 .login-header p {
@@ -1122,21 +1205,22 @@ header p {
 
 .btn-login {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     background: var(--secondary-color);
-    color: #1a1a1a;
+    color: white;
     border: none;
     border-radius: 8px;
-    font-size: 1em;
+    font-size: 0.9375rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-    margin-top: 15px;
+    transition: all var(--transition-speed) ease;
+    margin-top: 20px;
 }
 
 .btn-login:hover {
-    opacity: 0.9;
+    background: var(--warning-color);
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 .btn-login:active {
@@ -1224,18 +1308,20 @@ header p {
 
 .metric-card {
     background: var(--card-bg);
-    color: white;
-    padding: 20px;
-    border-radius: 15px;
+    color: var(--text-color);
+    padding: 24px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 16px;
     border: 1px solid var(--border-color);
     position: relative;
-    transition: border-color 0.2s ease;
+    transition: all var(--transition-speed) ease;
 }
 
 .metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
     border-color: var(--secondary-color);
 }
 
@@ -1278,10 +1364,11 @@ header p {
 
 /* Filtros do Dashboard */
 .dashboard-filters {
-    background: var(--bg-color);
+    background: var(--card-bg);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-bottom: 30px;
+    border: 1px solid var(--border-color);
 }
 
 .dashboard-filters h3 {
@@ -1330,9 +1417,9 @@ header p {
 /* Seções do Dashboard */
 .dashboard-section {
     background: var(--card-bg);
-    padding: 25px;
-    border-radius: 10px;
-    margin-bottom: 30px;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
     border: 1px solid var(--border-color);
 }
 
@@ -1356,9 +1443,13 @@ header p {
     justify-content: space-around;
     height: 300px;
     padding: 20px;
-    background: var(--bg-color);
+    background: transparent;
     border-radius: 8px;
     gap: 15px;
+}
+
+[data-theme="light"] .bar-chart {
+    background: var(--bg-color);
 }
 
 .bar-chart.horizontal {

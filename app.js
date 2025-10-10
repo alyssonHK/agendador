@@ -24,9 +24,11 @@ const closeModal = document.querySelector('.close');
 const cancelBtn = document.getElementById('cancel-btn');
 const valueInput = document.getElementById('value');
 const statusSelect = document.getElementById('status');
+const themeToggle = document.getElementById('theme-toggle');
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
+    initializeTheme();
     initializeTabs();
     initializeCalendar();
     loadAppointments();
@@ -68,11 +70,38 @@ function setupEventListeners() {
     closeModal.addEventListener('click', () => modal.classList.remove('active'));
     cancelBtn.addEventListener('click', resetForm);
 
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+
     window.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.classList.remove('active');
         }
     });
+}
+
+// Gerenciamento de Tema
+function initializeTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeIcon(newTheme);
+}
+
+function updateThemeIcon(theme) {
+    const themeIcon = document.querySelector('.theme-icon');
+    if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
 }
 
 // Formatação de moeda (R$)
